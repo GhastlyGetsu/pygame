@@ -125,6 +125,7 @@ while running:
                             tie = all(cell != "" for row in grid_state for cell in row)
                             if tie:
                                 winner = "Draw"
+                                game_state = "game_over"
                         current_player = ai_symbol  # Switch to AI
 
     # --- Drawing phase ---
@@ -181,6 +182,31 @@ while running:
                 restart_text = restart_font.render("Click anywhere to restart", True, "#155D27")
                 restart_rect = restart_text.get_rect(center=(screen.get_width() // 2, screen.get_height() - 50))
                 screen.blit(restart_text, restart_rect)
+
+    # Game over screen
+    elif game_state == "game_over":
+        screen.fill("#25A244")
+        
+        go_font = pygame.font.Font(None, 120)
+        go = go_font.render("Game Over!", True, "#155D27")
+        go_rect = go.get_rect(center=(screen.get_width() // 2, 50))
+        screen.blit(go, go_rect)
+
+        pa_rect = pygame.Rect(0, 0, 250, 80)
+        pa_rect.center = (screen.get_width() // 2, 200)
+        pa_font = pygame.font.Font(None, 60)
+        pygame.draw.rect(screen, "#4AD66D", pa_rect, border_radius=20)
+        pa_text = pa_font.render("Play Again", True, "#155D27")
+        pa_text_rect = pa_text.get_rect(center=(pa_rect.center))
+        screen.blit(pa_text, pa_text_rect)
+
+        qm_rect = pygame.Rect(0, 0, 250, 80)
+        qm_rect.center = (screen.get_width() // 2, 300)
+        qm_font = pygame.font.Font(None, 60)
+        pygame.draw.rect(screen, "#4AD66D", qm_rect, border_radius=20)
+        qm_text = pa_font.render("Quit to Menu", True, "#155D27")
+        qm_text_rect = qm_text.get_rect(center=(qm_rect.center))
+        screen.blit(qm_text, qm_text_rect)
 
     pygame.display.flip()
 
