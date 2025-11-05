@@ -93,6 +93,11 @@ def get_ai_move(board, ai_symbol, player_symbol):
         return random.choice(free_sides)
     return None
 
+def reset_game():
+    global grid_state, current_player, winner
+    grid_state = [["" for _ in range(3)] for _ in range (3)]
+    current_player = player_symbol
+    winner = None
 
 running = True
 while running:
@@ -107,6 +112,14 @@ while running:
                 if button_rect.collidepoint(mx, my):
                     game_state = "playing"
                     continue
+            if game_state == "game_over":
+                mx, my = pygame.mouse.get_pos()
+                if pa_rect.collidepoint(mx, my):
+                    reset_game()
+                    game_state = "playing"
+                elif qm_rect.collidepoint(mx, my):
+                    reset_game()
+                    game_state = "menu"
             if winner:
                 grid_state = [["" for _ in range(3)] for _ in range(3)]
                 current_player = player_symbol
@@ -121,12 +134,16 @@ while running:
                     if grid_state[row][col] == "":
                         grid_state[row][col] = player_symbol
                         winner = check_winner(grid_state)
-                        if not winner:
+                        if winner:
+                            pygame.time.wait(500)
+                            game_state = "game_over"
+                        else:
                             tie = all(cell != "" for row in grid_state for cell in row)
                             if tie:
                                 winner = "Draw"
                                 game_state = "game_over"
-                        current_player = ai_symbol  # Switch to AI
+                            else:
+                                current_player = ai_symbol
 
     # --- Drawing phase ---
     # Menu
@@ -219,11 +236,16 @@ while running:
             r, c = ai_move
             grid_state[r][c] = ai_symbol
             winner = check_winner(grid_state)
-            if not winner:
+            if winner:
+                pygame.time.wait(500)
+                game_state = "game_over"
+            else:
                 tie = all(cell != "" for row in grid_state for cell in row)
                 if tie:
                     winner = "Draw"
-            current_player = player_symbol  # Back to player
+                    game_state = "game_over"
+                else:
+                    current_player = player_symbol  # Back to player
 
     clock.tick(60)
 
